@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="'Weather Forecast for ' + ${city}">Weather Forecast</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1 class="title">🌤️ Weather Forecast</h1>
+            <h2 class="city-title" th:text="'Weather for ' + ${city}"></h2>
+            <a href="/" class="back-link">← Search Another City</a>
+        </header>
+
+        <main class="main-content">
+            <div class="forecast-container">
+                <div class="forecast-grid">
+                    <div th:each="forecast : ${forecast}" class="forecast-card">
+                        <div class="forecast-header">
+                            <div class="weather-icon" th:text="${forecast.icon}"></div>
+                            <div class="weather-condition" th:text="${forecast.weatherCondition}"></div>
+                        </div>
+                        
+                        <div class="forecast-details">
+                            <div class="date-time">
+                                <span class="date-label">Date & Time:</span>
+                                <span class="date-value" th:text="${forecast.date}"></span>
+                            </div>
+                            
+                            <div class="temperature">
+                                <span class="temp-label">Temperature:</span>
+                                <span class="temp-value" th:text="${forecast.temperature} + '°C'"></span>
+                            </div>
+                            
+                            <div class="humidity">
+                                <span class="humidity-label">Humidity:</span>
+                                <span class="humidity-value" th:text="${forecast.humidity} + '%'"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Summary Statistics -->
+            <div class="summary-section">
+                <h3>Forecast Summary</h3>
+                <div class="summary-stats">
+                    <div class="stat-card">
+                        <div class="stat-icon">📊</div>
+                        <div class="stat-label">Total Forecasts</div>
+                        <div class="stat-value" th:text="${#lists.size(forecast)}"></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🌡️</div>
+                        <div class="stat-label">Data Source</div>
+                        <div class="stat-value">OpenWeatherMap</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🔄</div>
+                        <div class="stat-label">Updated</div>
+                        <div class="stat-value">Real-time</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>&copy; 2024 Weather Forecast Application. Powered by OpenWeatherMap API.</p>
+        </footer>
+    </div>
+
+    <script src="/js/app.js"></script>
+</body>
+</html>

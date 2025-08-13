@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Forecast Application</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1 class="title">🌤️ Weather Forecast</h1>
+            <p class="subtitle">Get accurate weather predictions for any city worldwide</p>
+        </header>
+
+        <main class="main-content">
+            <div class="search-section">
+                <form action="/weather" method="post" class="search-form">
+                    <div class="input-group">
+                        <input type="text" 
+                               name="city" 
+                               id="city" 
+                               placeholder="Enter city name (e.g., London, New York, Tokyo)" 
+                               required 
+                               class="city-input">
+                        <button type="submit" class="search-btn">
+                            <span class="btn-text">Get Forecast</span>
+                            <span class="btn-icon">🔍</span>
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Alternative API-based search -->
+                <div class="api-search-section">
+                    <h3>Or try our instant search:</h3>
+                    <div class="input-group">
+                        <input type="text" 
+                               id="apiCity" 
+                               placeholder="Enter city name for instant results" 
+                               class="city-input">
+                        <button onclick="searchWeatherAPI()" class="search-btn api-btn">
+                            <span class="btn-text">Instant Search</span>
+                            <span class="btn-icon">⚡</span>
+                        </button>
+                    </div>
+                    <div id="apiResults" class="api-results"></div>
+                </div>
+            </div>
+
+            <!-- Error message display -->
+            <div th:if="${error}" class="error-message">
+                <span class="error-icon">⚠️</span>
+                <span th:text="${error}"></span>
+            </div>
+
+            <!-- Features section -->
+            <div class="features">
+                <div class="feature-card">
+                    <div class="feature-icon">🌡️</div>
+                    <h3>Temperature</h3>
+                    <p>Real-time temperature data in Celsius</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💧</div>
+                    <h3>Humidity</h3>
+                    <p>Accurate humidity percentage levels</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📅</div>
+                    <h3>5-Day Forecast</h3>
+                    <p>Extended weather predictions</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🌍</div>
+                    <h3>Global Coverage</h3>
+                    <p>Weather data for cities worldwide</p>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>&copy; 2024 Weather Forecast Application. Powered by OpenWeatherMap API.</p>
+        </footer>
+    </div>
+
+    <script src="/js/app.js"></script>
+</body>
+</html>
