@@ -5,7 +5,7 @@ FROM openjdk:17-jdk-slim
 WORKDIR /app
 
 # Copy Maven files and build
-COPY ./app
+COPY . /app
 
 # Build the application
 RUN apt-get update && apt-get install -y maven \
