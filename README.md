@@ -39,9 +39,4 @@ To use the Weather Forecasting System, follow these steps:
 4) Configure the API key in the application to enable data retrieval.
 
 5) Run the application and enter the desired location to get the weather forecast.
-
-## Contributing:
-
-We welcome contributions from the community to enhance this weather forecasting system. If you find any bugs, have suggestions for improvements, or want to add new features, please open an issue or submit a pull request.
-
-Let's work together to create a reliable and accurate weather forecasting system in Java! Happy coding!
+## DEPLOYED LINK :  https://weather-forecating-website-using-java-1.onrender.com
