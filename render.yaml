@@ -3,5 +3,5 @@ services:
     name: weather-forecasting
     env: java
     plan: free
-    buildCommand: ./mvnw clean package -DskipTests
+    buildCommand: mvn clean package -DskipTests
     startCommand: java -jar target/weather-forecast-web-1.0.0.jar
