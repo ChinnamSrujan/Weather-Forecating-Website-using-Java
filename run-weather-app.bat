@@ -1,0 +1,9 @@
+@echo off
+echo Starting Weather Forecast Web Application...
+echo.
+echo Compiling the application...
+call mvn clean compile
+echo.
+echo Starting Spring Boot application...
+call java -cp "target/classes;target/dependency/*" com.example.weather.WeatherForecastApplication
+pause

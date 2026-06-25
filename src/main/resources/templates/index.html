@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Forecast Application</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-default">
+<div class="container">
+    <header class="header">
+        <h1 class="title">🌤️ Weather Forecast</h1>
+        <p class="subtitle">Get accurate weather predictions for any city worldwide</p>
+    </header>
+
+    <main class="main-content">
+        <!-- Search Section -->
+        <div class="search-section">
+            <form action="/weather" method="post" class="search-form" id="mainSearchForm">
+                <div class="input-group">
+                    <input type="text" name="city" id="city"
+                           placeholder="Enter city name (e.g., London, New York, Tokyo)"
+                           required autocomplete="off" class="city-input">
+                    <button type="submit" class="search-btn">
+                        <span class="btn-text">Get Forecast</span>
+                        <span class="btn-icon">🔍</span>
+                    </button>
+                    <button type="button" onclick="locateMe()" class="search-btn geo-btn" title="Use my location">
+                        📍
+                    </button>
+                </div>
+            </form>
+
+            <!-- Recent searches -->
+            <div id="recentSearches" class="recent-section" style="display:none">
+                <h4>🕐 Recent Searches</h4>
+                <div id="recentList" class="tag-list"></div>
+            </div>
+
+            <!-- Favourites -->
+            <div id="favSection" class="recent-section" style="display:none">
+                <h4>⭐ Favourite Cities</h4>
+                <div id="favList" class="tag-list"></div>
+            </div>
+
+            <!-- Error message -->
+            <div th:if="${error}" class="error-message">
+                <span class="error-icon">⚠️</span>
+                <span th:text="${error}"></span>
+            </div>
+
+            <!-- Instant API search -->
+            <div class="api-search-section">
+                <h3>Or try our instant search:</h3>
+                <div class="input-group">
+                    <input type="text" id="apiCity"
+                           placeholder="Enter city name for instant results"
+                           class="city-input" autocomplete="off">
+                    <button onclick="searchWeatherAPI()" class="search-btn api-btn">
+                        <span class="btn-text">Instant Search</span>
+                        <span class="btn-icon">⚡</span>
+                    </button>
+                </div>
+                <div id="apiResults" class="api-results"></div>
+            </div>
+        </div>
+
+        <!-- Features grid -->
+        <div class="features">
+            <div class="feature-card"><div class="feature-icon">🌡️</div><h3>Temperature</h3><p>Real-time temperature with feels-like data</p></div>
+            <div class="feature-card"><div class="feature-icon">💨</div><h3>Wind</h3><p>Wind speed and direction</p></div>
+            <div class="feature-card"><div class="feature-icon">📅</div><h3>5-Day Forecast</h3><p>Daily min/max summary cards</p></div>
+            <div class="feature-card"><div class="feature-icon">📈</div><h3>Temp Chart</h3><p>Interactive temperature trend graph</p></div>
+            <div class="feature-card"><div class="feature-icon">🌍</div><h3>Global Coverage</h3><p>Weather data for cities worldwide</p></div>
+            <div class="feature-card"><div class="feature-icon">🌿</div><h3>Air Quality</h3><p>PM2.5, NO₂ and AQI index</p></div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2025 Weather Forecast Application. Powered by OpenWeatherMap API.</p>
+    </footer>
+</div>
+
+<script src="/js/app.js"></script>
+<script src="/js/home.js"></script>
+</body>
+</html>

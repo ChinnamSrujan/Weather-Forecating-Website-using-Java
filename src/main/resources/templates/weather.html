@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="'Weather – ' + ${city}">Weather Forecast</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body th:class="${bgClass}">
+<div class="container">
+
+    <!-- ── Header ──────────────────────────────────────────── -->
+    <header class="header">
+        <h1 class="title">🌤️ Weather Forecast</h1>
+        <h2 class="city-title" th:text="${current?.city} + ', ' + ${current?.country ?: city}"></h2>
+        <div class="header-actions">
+            <a href="/" class="back-link">← Search Another City</a>
+            <button class="fav-btn" id="favBtn" th:data-city="${city}" onclick="toggleFavourite(this)">☆ Favourite</button>
+            <div class="unit-toggle">
+                <button id="unitC" class="unit-btn active" onclick="setUnit('C')">°C</button>
+                <button id="unitF" class="unit-btn" onclick="setUnit('F')">°F</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+
+        <!-- ── Current Weather Card ─────────────────────────── -->
+        <div th:if="${current}" class="current-card">
+            <div class="current-left">
+                <div class="current-emoji" th:text="${current.weatherEmoji}"></div>
+                <div class="current-temp">
+                    <span class="temp-display" th:data-celsius="${current.temperature}"
+                          th:text="${#numbers.formatDecimal(current.temperature,1,1)} + '°C'"></span>
+                </div>
+                <div class="current-desc" th:text="${current.weatherDescription}"></div>
+                <div class="current-city" th:text="'Feels like ' + ${#numbers.formatDecimal(current.feelsLike,1,1)} + '°C'"></div>
+            </div>
+            <div class="current-right">
+                <div class="current-detail"><span>💧 Humidity</span><strong th:text="${current.humidity} + '%'"></strong></div>
+                <div class="current-detail"><span>💨 Wind</span><strong th:text="${current.windSpeed} + ' m/s ' + ${current.windDirection}"></strong></div>
+                <div class="current-detail"><span>🔵 Pressure</span><strong th:text="${current.pressure} + ' hPa'"></strong></div>
+                <div class="current-detail"><span>👁 Visibility</span><strong th:text="${current.visibility / 1000} + ' km'"></strong></div>
+                <div class="current-detail"><span>⬇️ Min / ⬆️ Max</span>
+                    <strong>
+                        <span th:data-celsius="${current.tempMin}" th:text="${#numbers.formatDecimal(current.tempMin,1,1)}"></span>°C /
+                        <span th:data-celsius="${current.tempMax}" th:text="${#numbers.formatDecimal(current.tempMax,1,1)}"></span>°C
+                    </strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Sunrise / Sunset Arc ─────────────────────────── -->
+        <div th:if="${current}" class="sunrise-card">
+            <h3>🌅 Sunrise &amp; Sunset</h3>
+            <div class="sun-arc-wrapper">
+                <canvas id="sunArcCanvas" width="400" height="160"></canvas>
+            </div>
+            <div class="sun-times">
+                <span id="sunriseTime">🌅 --:--</span>
+                <span id="sunsetTime">🌇 --:--</span>
+            </div>
+        </div>
+
+        <!-- ── Clothing Suggestion ──────────────────────────── -->
+        <div th:if="${current}" class="clothing-card">
+            <h3>👗 What to Wear</h3>
+            <p class="clothing-tip" th:text="${current.clothingSuggestion}"></p>
+        </div>
+
+        <!-- ── Air Quality ──────────────────────────────────── -->
+        <div th:if="${airQuality}" class="aq-card">
+            <h3>🌿 Air Quality</h3>
+            <div class="aq-header">
+                <span class="aqi-badge" th:classappend="${airQuality.aqiClass}"
+                      th:text="'AQI ' + ${airQuality.aqi} + ' – ' + ${airQuality.aqiLabel}"></span>
+            </div>
+            <div class="aq-grid">
+                <div class="aq-item"><span>PM2.5</span><strong th:text="${#numbers.formatDecimal(airQuality.pm2_5,1,1)} + ' µg/m³'"></strong></div>
+                <div class="aq-item"><span>PM10</span><strong th:text="${#numbers.formatDecimal(airQuality.pm10,1,1)} + ' µg/m³'"></strong></div>
+                <div class="aq-item"><span>NO₂</span><strong th:text="${#numbers.formatDecimal(airQuality.no2,1,1)} + ' µg/m³'"></strong></div>
+                <div class="aq-item"><span>O₃</span><strong th:text="${#numbers.formatDecimal(airQuality.o3,1,1)} + ' µg/m³'"></strong></div>
+                <div class="aq-item"><span>CO</span><strong th:text="${#numbers.formatDecimal(airQuality.co,1,1)} + ' µg/m³'"></strong></div>
+            </div>
+        </div>
+
+        <!-- ── Temperature Chart ────────────────────────────── -->
+        <div class="chart-card">
+            <h3>📈 Temperature Trend (Next 5 Days)</h3>
+            <canvas id="tempChart" height="100"></canvas>
+        </div>
+
+        <!-- ── Daily Summary Cards ──────────────────────────── -->
+        <div class="daily-section">
+            <h3>📅 5-Day Summary</h3>
+            <div class="daily-grid">
+                <div th:each="day : ${daily}" class="daily-card">
+                    <div class="daily-icon" th:text="${day.icon}"></div>
+                    <div class="daily-date" th:text="${day.date}"></div>
+                    <div class="daily-condition" th:text="${day.condition}"></div>
+                    <div class="daily-temps">
+                        <span class="temp-min" th:data-celsius="${day.minTemp}" th:text="${day.minTemp} + '°C'"></span>
+                        <span class="temp-sep"> / </span>
+                        <span class="temp-max" th:data-celsius="${day.maxTemp}" th:text="${day.maxTemp} + '°C'"></span>
+                    </div>
+                    <div class="daily-detail">💧 <span th:text="${day.humidity} + '%'"></span></div>
+                    <div class="daily-detail" th:if="${day.windSpeed != null}">💨 <span th:text="${day.windSpeed} + ' m/s'"></span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Hourly Carousel (next 24h) ───────────────────── -->
+        <div class="hourly-section">
+            <h3>🕐 Hourly Forecast (Next 24h)</h3>
+            <div class="hourly-carousel-wrapper">
+                <button class="carousel-arrow left-arrow" onclick="scrollCarousel(-1)">‹</button>
+                <div class="hourly-carousel" id="hourlyCarousel">
+                    <div th:each="f, stat : ${forecast}" th:if="${stat.index < 8}" class="hourly-item">
+                        <div class="hourly-time" th:text="${#strings.substring(f.date,11,16)}"></div>
+                        <div class="hourly-icon" th:text="${f.icon}"></div>
+                        <div class="hourly-temp temp-display" th:data-celsius="${f.temperature}"
+                             th:text="${f.temperature} + '°C'"></div>
+                        <div class="hourly-humidity">💧 <span th:text="${f.humidity} + '%'"></span></div>
+                        <div class="hourly-wind" th:if="${f.windSpeed != null}">💨 <span th:text="${f.windSpeed} + ' m/s'"></span></div>
+                    </div>
+                </div>
+                <button class="carousel-arrow right-arrow" onclick="scrollCarousel(1)">›</button>
+            </div>
+        </div>
+
+        <!-- ── Full 5-day / 3-hour Forecast ─────────────────── -->
+        <div class="forecast-container">
+            <h3>🗓️ Full 5-Day / 3-Hour Forecast</h3>
+            <div class="forecast-grid">
+                <div th:each="f : ${forecast}" class="forecast-card">
+                    <div class="forecast-header">
+                        <div class="weather-icon" th:text="${f.icon}"></div>
+                        <div class="weather-condition" th:text="${f.weatherCondition}"></div>
+                        <div class="weather-desc" th:text="${f.weatherDescription}"></div>
+                    </div>
+                    <div class="forecast-details">
+                        <div><span class="date-label">Date &amp; Time</span>
+                            <span class="date-value" th:text="${f.date}"></span></div>
+                        <div><span class="temp-label">Temperature</span>
+                            <span class="temp-value temp-display" th:data-celsius="${f.temperature}"
+                                  th:text="${f.temperature} + '°C'"></span></div>
+                        <div><span class="temp-label">Feels Like</span>
+                            <span class="temp-value temp-display" th:data-celsius="${f.feelsLike}"
+                                  th:text="${f.feelsLike} + '°C'"></span></div>
+                        <div><span class="humidity-label">Humidity</span>
+                            <span class="humidity-value" th:text="${f.humidity} + '%'"></span></div>
+                        <div th:if="${f.windSpeed != null}">
+                            <span class="date-label">Wind</span>
+                            <span th:text="${f.windSpeed} + ' m/s ' + ${f.windDirection}"></span></div>
+                        <div th:if="${f.pressure != null}">
+                            <span class="date-label">Pressure</span>
+                            <span th:text="${f.pressure} + ' hPa'"></span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2025 Weather Forecast Application. Powered by OpenWeatherMap API.</p>
+    </footer>
+</div>
+
+<!-- Pass server-side data to JS -->
+<script th:inline="javascript">
+    const FORECAST_DATA = /*[[${forecast}]]*/ [];
+    const CURRENT_DATA  = /*[[${current}]]*/ null;
+    const CITY_NAME     = /*[[${city}]]*/ '';
+</script>
+<script src="/js/app.js"></script>
+<script src="/js/weather.js"></script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: weather-forecasting
+    env: java
+    plan: free
+    buildCommand: mvn clean package -DskipTests
+    startCommand: java -jar target/weather-forecast-web-1.0.0.jar
