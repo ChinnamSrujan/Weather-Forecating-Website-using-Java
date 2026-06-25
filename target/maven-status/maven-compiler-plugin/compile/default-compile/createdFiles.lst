@@ -1,0 +1,7 @@
+com\example\weather\model\WeatherForecastData.class
+com\example\weather\service\OpenWeatherMapRetriever.class
+com\example\weather\controller\WeatherController.class
+com\example\weather\service\WeatherDataRetriever.class
+com\example\weather\service\WeatherService.class
+com\example\weather\controller\WeatherApiController.class
+com\example\weather\WeatherForecastApplication.class
